@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mycelium UG — From Innovation to Real-World Adoption</title>
+  <meta name="description" content="Mycelium works with researchers, NGOs, and innovators to pilot solutions in real-world environments, translate them into usable products, and prepare them for scale." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-head: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --bg:           #F6FAF7;
+      --bg2:          #ECF4EE;
+      --surface:      #FFFFFF;
+      --accent:       #2C9E57;
+      --accent-dark:  #1D7A41;
+      --accent-light: #4DB877;
+      --accent-glow:  rgba(44, 158, 87, 0.18);
+      --accent-faint: rgba(44, 158, 87, 0.08);
+      --accent-line:  rgba(44, 158, 87, 0.22);
+      --text:         #0D1F15;
+      --text-dim:     #3A6248;
+      --text-muted:   #7A9E85;
+      --shadow-sm:    0 2px 10px rgba(13, 40, 22, 0.06);
+      --shadow-md:    0 6px 24px rgba(13, 40, 22, 0.10);
+      --shadow-lg:    0 12px 40px rgba(13, 40, 22, 0.14);
+      --radius:       12px;
+      --max:          1080px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── CANVAS ────────────────────────────────────── */
+    #canvas {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── NAV ───────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 1.1rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transform: translateY(-110%);
+      transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), background 0.4s;
+    }
+    nav.show {
+      transform: translateY(0);
+      background: rgba(246, 250, 247, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--accent-line);
+      box-shadow: 0 2px 20px rgba(13, 40, 22, 0.07);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.65rem;
+      text-decoration: none; color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em;
+    }
+    .nav-cta {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1.25rem;
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 2rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-dark); border-color: var(--accent-dark); transform: translateY(-1px); }
+
+    /* ── SHARED LAYOUT ─────────────────────────────── */
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 2.5rem; }
+    .divider {
+      position: relative; z-index: 1;
+      max-width: var(--max); margin: 0 auto; padding: 0 2.5rem;
+    }
+    .divider::after {
+      content: '';
+      display: block;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent-line), transparent);
+    }
+
+    /* Reveal on scroll */
+    .r { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .r.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.18s; }
+    .d3 { transition-delay: 0.28s; }
+    .d4 { transition-delay: 0.38s; }
+
+    /* Section label */
+    .tag {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-faint);
+      border: 1px solid var(--accent-line);
+      border-radius: 2rem;
+      padding: 0.3rem 0.9rem;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── HERO ──────────────────────────────────────── */
+    #hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      overflow: hidden;
+    }
+    /* Soft ambient blobs */
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: -15%; right: -8%;
+      width: 65vw; height: 65vw;
+      max-width: 760px; max-height: 760px;
+      background: radial-gradient(circle, rgba(44,158,87,0.13) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute;
+      bottom: -12%; left: -6%;
+      width: 45vw; height: 45vw;
+      max-width: 520px; max-height: 520px;
+      background: radial-gradient(circle, rgba(44,158,87,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    #hero .wrap { padding-top: 9rem; padding-bottom: 7rem; }
+
+    .hero-kicker {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-faint);
+      border: 1px solid var(--accent-line);
+      border-radius: 2rem;
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      margin-bottom: 1.75rem;
+      opacity: 0; transform: translateY(12px);
+      animation: up 0.8s ease 0.2s forwards;
+    }
+    .hero-h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 6.5vw, 5.8rem);
+      font-weight: 800; line-height: 1.02;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      max-width: 780px;
+      opacity: 0; transform: translateY(22px);
+      animation: up 0.9s ease 0.35s forwards;
+    }
+    .hero-h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      font-weight: 400; color: var(--text-dim);
+      max-width: 520px; margin-top: 2rem; line-height: 1.7;
+      opacity: 0; transform: translateY(18px);
+      animation: up 0.9s ease 0.55s forwards;
+    }
+    .hero-note {
+      font-style: italic;
+      color: var(--text-muted);
+      max-width: 460px; margin-top: 0.6rem;
+      font-size: 0.95rem;
+      opacity: 0; transform: translateY(14px);
+      animation: up 0.9s ease 0.7s forwards;
+    }
+    .hero-actions {
+      display: flex; align-items: center; gap: 1.25rem; margin-top: 2.75rem;
+      opacity: 0; transform: translateY(14px);
+      animation: up 0.9s ease 0.88s forwards;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.9rem 2rem;
+      background: var(--accent); color: #fff;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2rem;
+      box-shadow: 0 4px 20px rgba(44,158,87,0.32);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      background: var(--accent-dark);
+      box-shadow: 0 8px 32px rgba(44,158,87,0.38);
+    }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.9rem 2rem;
+      background: transparent; color: var(--text-dim);
+      font-family: 'Syne', sans-serif; font-weight: 600;
+      font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2rem;
+      border: 1.5px solid var(--accent-line);
+      transition: background 0.22s, border-color 0.22s, color 0.22s;
+    }
+    .btn-secondary:hover {
+      background: var(--accent-faint);
+      border-color: rgba(44,158,87,0.45);
+      color: var(--accent);
+    }
+
+    .hero-scroll {
+      position: absolute; bottom: 2.75rem; left: 2.5rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0; animation: up 1s ease 1.2s forwards;
+    }
+    .scroll-bar {
+      width: 36px; height: 1px;
+      background: var(--accent-line);
+      overflow: hidden; position: relative;
+    }
+    .scroll-bar::after {
+      content: ''; position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: var(--accent);
+      animation: scan 2.2s ease 1.6s infinite;
+    }
+
+    /* ── PROBLEM ───────────────────────────────────── */
+    #problem { position: relative; z-index: 1; background: var(--bg2); padding: 7rem 0; }
+    .problem-lead {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -0.025em; margin-bottom: 3.5rem;
+    }
+    .problem-lead em {
+      font-style: italic;
+      font-family: 'Instrument Sans', sans-serif;
+      font-weight: 400; color: var(--accent);
+    }
+    .p-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .p-card {
+      background: var(--surface);
+      border: 1px solid var(--accent-line);
+      border-radius: 12px; padding: 1.75rem 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+    }
+    .p-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+      border-color: rgba(44,158,87,0.4);
+    }
+    .p-num {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 2.25rem; line-height: 1;
+      color: var(--accent); opacity: 0.28;
+      margin-bottom: 0.75rem;
+    }
+    .p-card p { font-size: 0.93rem; color: var(--text-dim); line-height: 1.65; }
+    .p-card p strong { color: var(--text); }
+
+    /* ── WHAT WE DO ────────────────────────────────── */
+    #wwd { position: relative; z-index: 1; padding: 7rem 0; }
+    .section-h {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.9rem, 3.8vw, 3.2rem);
+      font-weight: 800; letter-spacing: -0.025em; line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      font-style: italic; color: var(--text-dim);
+      font-size: 1rem; max-width: 460px; margin-bottom: 3.5rem;
+    }
+    .w-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+    }
+    .w-card {
+      padding: 2rem 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--accent-line);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      position: relative; overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+    }
+    .w-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--accent), var(--accent-light));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .w-card:hover::before { opacity: 1; }
+    .w-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: rgba(44,158,87,0.35); }
+    .w-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--accent-faint); border: 1px solid var(--accent-line);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .w-icon svg { color: var(--accent); }
+    .w-card h3 {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.95rem; letter-spacing: 0.02em;
+      color: var(--text); margin-bottom: 0.6rem;
+    }
+    .w-card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.65; }
+
+    /* ── HOW WE WORK ───────────────────────────────── */
+    #how { position: relative; z-index: 1; background: var(--bg2); padding: 7rem 0; }
+    .how-lead {
+      font-size: 1.05rem; font-weight: 500; font-style: italic;
+      color: var(--text-dim); max-width: 600px; margin-bottom: 2rem;
+    }
+    .how-points { list-style: none; margin-bottom: 2.75rem; display: flex; flex-direction: column; gap: 0.65rem; }
+    .how-points li {
+      display: flex; align-items: flex-start; gap: 1rem;
+      font-size: 0.95rem; color: var(--text-dim); line-height: 1.6;
+      padding: 0.85rem 1.1rem;
+      background: var(--surface);
+      border: 1px solid var(--accent-line);
+      border-radius: 8px;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .how-points li:hover {
+      background: var(--accent-faint);
+      border-color: rgba(44,158,87,0.38);
+      transform: translateX(4px);
+    }
+    .how-points li::before {
+      content: '→'; color: var(--accent);
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      flex-shrink: 0; margin-top: 0.05rem;
+    }
+    .mode-label {
+      font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 1rem;
+    }
+    .tags {
+      display: flex; flex-wrap: wrap; gap: 0.55rem;
+    }
+    .chip {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      background: var(--surface);
+      border: 1px solid var(--accent-line);
+      border-radius: 2rem; padding: 0.4rem 0.9rem;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+      cursor: default;
+    }
+    .chip:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: translateY(-1px); }
+    .how-coda {
+      margin-top: 2.5rem; font-style: italic;
+      color: var(--text-dim); font-size: 0.95rem;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border-radius: 0 8px 8px 0;
+      box-shadow: var(--shadow-sm);
+    }
+    .how-coda strong { color: var(--text); font-style: normal; }
+
+    /* ── CURRENT FOCUS ─────────────────────────────── */
+    #focus { position: relative; z-index: 1; padding: 7rem 0; }
+    .f-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+      margin-top: 3rem;
+    }
+    .f-card {
+      padding: 2rem 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--accent-line);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      position: relative; overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+    }
+    .f-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--accent), transparent);
+      opacity: 0.5;
+    }
+    .f-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: rgba(44,158,87,0.38); }
+    .f-num {
+      font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.2em; color: var(--accent);
+      background: var(--accent-faint);
+      border: 1px solid var(--accent-line);
+      border-radius: 2rem;
+      display: inline-block; padding: 0.2rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .f-card h3 {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.97rem; color: var(--text); line-height: 1.45;
+      margin-bottom: 0.6rem;
+    }
+    .f-card p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; }
+
+    /* ── CONTACT ───────────────────────────────────── */
+    #contact {
+      position: relative; z-index: 1; background: var(--bg2);
+      padding: 8rem 0; text-align: center;
+    }
+    .contact-h {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      font-weight: 800; letter-spacing: -0.025em; line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .contact-sub {
+      font-style: italic; color: var(--text-dim); font-size: 1rem;
+      margin-bottom: 2.75rem;
+    }
+    .contact-email {
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.03em; color: #fff;
+      text-decoration: none; padding: 1rem 2.5rem;
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 2rem;
+      box-shadow: 0 4px 22px rgba(44,158,87,0.32);
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .contact-email:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(44,158,87,0.38);
+    }
+
+    /* ── FOOTER ────────────────────────────────────── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 1.75rem 2.5rem;
+      color: var(--text-muted); font-size: 0.72rem; letter-spacing: 0.07em;
+      border-top: 1px solid var(--accent-line);
+      background: var(--surface);
+    }
+
+    /* ── KEYFRAMES ─────────────────────────────────── */
+    @keyframes up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────── */
+    @media (max-width: 860px) {
+      .p-grid, .w-grid, .f-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .p-grid, .w-grid, .f-grid { grid-template-columns: 1fr; }
+      .wrap, .divider { padding-left: 1.5rem; padding-right: 1.5rem; }
+      nav { padding: 1rem 1.5rem; }
+      .hero-scroll { display: none; }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+    }
+    /* ── FONT OVERRIDES (replacing Syne → Plus Jakarta Sans, Instrument Sans → Inter) */
+    .nav-logo, .nav-cta, .tag, .hero-kicker, .hero-h1,
+    .btn-primary, .btn-secondary,
+    .problem-lead, .p-num, .section-h,
+    .how-points li::before, .mode-label, .chip,
+    .contact-h, .contact-email,
+    .w-card h3, .f-card h3, .f-num,
+    footer { font-family: var(--font-head); }
+
+    .problem-lead em { font-family: var(--font-body); }
+
+    /* Tighten letter-spacing — Syne needed negative tracking, Plus Jakarta doesn't */
+    .hero-h1 { letter-spacing: -0.02em; }
+    .problem-lead, .section-h, .contact-h { letter-spacing: -0.02em; }
+    .tag, .hero-kicker, .mode-label, .f-num { letter-spacing: 0.1em; }
+    .nav-cta, .btn-primary { letter-spacing: 0.06em; }
+    .btn-secondary { letter-spacing: 0.05em; }
+    .hero-scroll { letter-spacing: 0.12em; }
+    footer { letter-spacing: 0.05em; }
+
+    /* ── LOGO STYLES ──────────────────────────────── */
+    .nav-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      display: block;
+    }
+    /* Remove the old text-label gap since we're image-only */
+    .nav-logo { gap: 0; }
+
+    /* Hero brand block */
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 3rem;
+    }
+    .hero-text { min-width: 0; }
+    .hero-brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+    .hero-brand-img {
+      width: clamp(260px, 30vw, 420px);
+      height: auto;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      display: block;
+    }
+    @media (max-width: 860px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+      .hero-brand {
+        justify-content: flex-start;
+        order: -1;
+      }
+      .hero-brand-img {
+        width: clamp(180px, 50vw, 300px);
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Network canvas -->
+<canvas id="canvas"></canvas>
+
+<!-- ── NAV ──────────────────────────────────────────── -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">
+    <img src="logo.png" alt="Mycelium UG" class="nav-logo-img">
+  </a>
+  <a href="#contact" class="nav-cta">Get in Touch</a>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <p class="hero-kicker">Bridging the adoption gap in food systems</p>
+        <h1 class="hero-h1">From innovation to<br><em>real-world adoption</em><br>in food systems.</h1>
+        <p class="hero-sub">Most promising solutions — especially AI for Food Security — never make it beyond pilots.</p>
+        <p class="hero-note">We exist to change that.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn-primary">
+            Let's Talk
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#wwd" class="btn-secondary">See what we do</a>
+        </div>
+      </div>
+      <div class="hero-brand r">
+        <img src="logo.png" alt="Mycelium UG" class="hero-brand-img">
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-bar"></div>
+    Scroll
+  </div>
+</section>
+
+<div class="divider r"></div>
+
+<!-- ── PROBLEM ──────────────────────────────────────── -->
+<section id="problem">
+  <div class="wrap">
+    <p class="tag r">The Problem</p>
+    <h2 class="problem-lead r">Innovation is not<br>the problem.<br><em>Adoption is.</em></h2>
+    <div class="p-grid">
+      <div class="p-card r d1">
+        <div class="p-num">01</div>
+        <p>High-potential solutions remain <strong>under-tested</strong> in real conditions — confined to labs and controlled environments.</p>
+      </div>
+      <div class="p-card r d2">
+        <div class="p-num">02</div>
+        <p>They are <strong>disconnected</strong> from the actual users and communities they are built to serve.</p>
+      </div>
+      <div class="p-card r d3">
+        <div class="p-num">03</div>
+        <p>They get <strong>stuck</strong> in the gap between research findings and real-world implementation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider r"></div>
+
+<!-- ── WHAT WE DO ────────────────────────────────────── -->
+<section id="wwd">
+  <div class="wrap">
+    <p class="tag r">What We Do</p>
+    <h2 class="section-h r">We don't just advise.<br>We activate.</h2>
+    <p class="section-sub r">Mycelium works with researchers, NGOs, and innovators at the critical gap between proof-of-concept and scale.</p>
+    <div class="w-grid">
+      <div class="w-card r d1">
+        <div class="w-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42"/>
+          </svg>
+        </div>
+        <h3>Pilot in real-world environments</h3>
+        <p>We take solutions out of the lab and run field tests in conditions that actually match the problem.</p>
+      </div>
+      <div class="w-card r d2">
+        <div class="w-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M5 7h6M5 9.5h4"/>
+          </svg>
+        </div>
+        <h3>Translate into usable products</h3>
+        <p>We bridge the language gap — turning research outputs into market-facing, user-ready solutions.</p>
+      </div>
+      <div class="w-card r d3">
+        <div class="w-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12l4-4 3 3 5-7"/><circle cx="14" cy="4" r="1.5"/>
+          </svg>
+        </div>
+        <h3>Prepare for scale & investment</h3>
+        <p>We structure solutions for partnerships, funding, and meaningful adoption at scale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider r"></div>
+
+<!-- ── HOW WE WORK ───────────────────────────────────── -->
+<section id="how">
+  <div class="wrap">
+    <p class="tag r">How We Work</p>
+    <h2 class="section-h r">A commercialization partner,<br>not a consultant.</h2>
+    <p class="how-lead r">We operate hands-on, focused, and fast — because the world doesn't need more reports.</p>
+    <ul class="how-points r d1">
+      <li>We work directly with the people behind the innovation</li>
+      <li>We focus on one solution at a time to build real traction</li>
+      <li>We move through structured, evidence-based modes — not theory</li>
+    </ul>
+
+    <p class="mode-label r d2">Our Operating Modes</p>
+    <div class="tags r d2">
+      <span class="chip">Pilots & Field Tests</span>
+      <span class="chip">Demonstration Projects</span>
+      <span class="chip">Proof of Concept</span>
+      <span class="chip">Prototyping</span>
+      <span class="chip">Co-Creation Sites</span>
+      <span class="chip">Testbeds</span>
+      <span class="chip">Urban Labs</span>
+      <span class="chip">Innovation Ecosystems</span>
+      <span class="chip">Regulatory Sandboxes</span>
+      <span class="chip">Demonstration Cities</span>
+      <span class="chip">Cities as a Lab</span>
+      <span class="chip">Community of Practice</span>
+      <span class="chip">Business Cases</span>
+    </div>
+
+    <p class="how-coda r d3"><strong>We don't build technology.</strong> We make it usable.</p>
+  </div>
+</section>
+
+<div class="divider r"></div>
+
+<!-- ── CURRENT FOCUS ─────────────────────────────────── -->
+<section id="focus">
+  <div class="wrap">
+    <p class="tag r">Current Direction</p>
+    <h2 class="section-h r">What we're piloting<br>right now.</h2>
+    <div class="f-grid">
+      <div class="f-card r d1">
+        <p class="f-num">01 — AI</p>
+        <h3>AI-powered advisory tools for agriculture</h3>
+        <p>Translating machine learning research into field-ready decision tools for farmers and agronomists.</p>
+      </div>
+      <div class="f-card r d2">
+        <p class="f-num">02 — Intelligence</p>
+        <h3>Resource intelligence and mapping platforms</h3>
+        <p>Turning complex supply chain data into actionable intelligence for NGOs and policymakers.</p>
+      </div>
+      <div class="f-card r d3">
+        <p class="f-num">03 — Circular</p>
+        <h3>Circular and sustainable food system innovations</h3>
+        <p>Piloting closed-loop food production models that reduce waste and build local supply chain resilience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider r"></div>
+
+<!-- ── CONTACT ───────────────────────────────────────── -->
+<section id="contact">
+  <div class="wrap">
+    <p class="tag r">Contact</p>
+    <h2 class="contact-h r">Building something that<br>deserves to exist?</h2>
+    <p class="contact-sub r">Let's talk.</p>
+    <div class="r d1">
+      <a href="mailto:info@mycelium.eu" class="contact-email">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="14" height="10" rx="1.5"/>
+          <path d="M1 5l7 5 7-5"/>
+        </svg>
+        info@mycelium.eu
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────── -->
+<footer>
+  <p>© 2025 Mycelium UG &nbsp;·&nbsp; From Innovation to Real-World Adoption</p>
+</footer>
+
+<script>
+  /* ── CANVAS NETWORK ─────────────────────────────── */
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes, raf;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initNodes() {
+    const count = Math.min(70, Math.floor((W * H) / 14000));
+    nodes = Array.from({ length: count }, () => ({
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.28,
+      vy: (Math.random() - 0.5) * 0.28,
+      r:  Math.random() * 1.6 + 0.8,
+    }));
+  }
+
+  function drawNetwork() {
+    ctx.clearRect(0, 0, W, H);
+    const MAX_DIST = 160;
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < MAX_DIST) {
+          const a = (1 - d / MAX_DIST) * 0.09;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = `rgba(44,158,87,${a})`;
+          ctx.lineWidth = 0.7;
+          ctx.stroke();
+        }
+      }
+    }
+
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(44,158,87,0.28)';
+      ctx.fill();
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    });
+
+    raf = requestAnimationFrame(drawNetwork);
+  }
+
+  resize();
+  initNodes();
+  drawNetwork();
+
+  window.addEventListener('resize', () => {
+    resize();
+    initNodes();
+  });
+
+  /* ── NAV ON SCROLL ───────────────────────────────── */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('show', window.scrollY > 80);
+  }, { passive: true });
+
+  /* ── REVEAL ON SCROLL ────────────────────────────── */
+  const revEls = document.querySelectorAll('.r');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
