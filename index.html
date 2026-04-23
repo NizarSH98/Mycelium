@@ -280,6 +280,19 @@
     }
     .p-card p { font-size: 0.93rem; color: var(--text-dim); line-height: 1.65; }
     .p-card p strong { color: var(--text); }
+    .problem-intro {
+      font-size: 1rem; color: var(--text-dim);
+      max-width: 640px; margin-bottom: 2rem; line-height: 1.7;
+    }
+    .problem-coda {
+      margin-top: 2rem; font-size: 0.93rem; font-style: italic;
+      color: var(--text-dim); max-width: 680px;
+      border-left: 3px solid var(--accent-line);
+      padding: 0.85rem 1.1rem;
+      background: var(--surface);
+      border-radius: 0 8px 8px 0;
+      box-shadow: var(--shadow-sm);
+    }
 
     /* ── WHAT WE DO ────────────────────────────────── */
     #wwd { position: relative; z-index: 1; padding: 7rem 0; }
@@ -387,7 +400,7 @@
     /* ── CURRENT FOCUS ─────────────────────────────── */
     #focus { position: relative; z-index: 1; padding: 7rem 0; }
     .f-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;
       margin-top: 3rem;
     }
     .f-card {
@@ -635,7 +648,7 @@
   <div class="wrap">
     <div class="hero-inner">
       <div class="hero-text">
-        <h1 class="hero-h1">From innovation to<br><em>real-world adoption</em><br>in food systems.</h1>
+        <h1 class="hero-h1">From innovation to<br><em>real-world adoption</em><br>in food systems and food security.</h1>
         <p class="hero-sub">Most promising solutions — especially AI for Food Security — never make it beyond pilots.</p>
         <p class="hero-note">We exist to change that.</p>
         <div class="hero-actions">
@@ -664,6 +677,7 @@
   <div class="wrap">
     <p class="tag r">The Problem</p>
     <h2 class="problem-lead r">Innovation is not<br>the problem.<br><em>Adoption is.</em></h2>
+    <p class="problem-intro r">Across food systems, high-potential solutions, particularly those addressing food security challenges, remain:</p>
     <div class="p-grid">
       <div class="p-card r d1">
         <div class="p-num">01</div>
@@ -678,6 +692,7 @@
         <p>They get <strong>stuck</strong> in the gap between research findings and real-world implementation.</p>
       </div>
     </div>
+    <p class="problem-coda r">This gap is especially critical in regions where food security depends on the successful adoption of practical, scalable solutions.</p>
   </div>
 </section>
 
@@ -778,6 +793,11 @@
         <p class="f-num">03 — Circular</p>
         <h3>Circular and sustainable food system innovations</h3>
         <p>Piloting closed-loop food production models that reduce waste and build local supply chain resilience.</p>
+      </div>
+      <div class="f-card r d4">
+        <p class="f-num">04 — MENA</p>
+        <h3>Applications addressing food security challenges in the MENA region</h3>
+        <p>Bridging available technology and on-the-ground needs across North Africa and the Middle East, where food insecurity demands scalable, context-aware solutions.</p>
       </div>
     </div>
   </div>
